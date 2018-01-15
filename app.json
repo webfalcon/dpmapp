@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "DPM Armenia",
+    "icon": "./img/app-icon.png",
+    "version": "1.1.2",
+    "slug": "dpm-dpmarmenia-bible",
+    "sdkVersion": "22.0.0",
+    "ios": {
+      "bundleIdentifier": "com.dpmarmenia.bible"
+    },
+    "android": {
+      "package": "com.dpmarmenia.bible"
+    },
+    "splash": {
+      "image": "./img/splash.png",
+      "backgroundColor": "#ffffff",
+      "resizeMode": "cover"
+    },
+    "orientation": "portrait",
+    "primaryColor": "#328fbc",
+    "androidStatusBar": {
+      "backgroundColor": "#328FBC",
+      "barStyle": "light-content"
+    }
+  }
+}
