@@ -14,7 +14,7 @@ import {
     Text,
     Spinner
 } from "native-base";
-import {ImageBackground, TouchableOpacity} from 'react-native';
+import {ImageBackground, TouchableOpacity, Image} from 'react-native';
 import PageHeader from '../PageHeader';
 import styles from "./styles";
 const api = 'https://derekprincearmenia.com/wp-json/wp/v2/';
@@ -84,7 +84,7 @@ class Books extends Component {
                     <List dataArray={this.state.books} renderRow={(item)=>
                         <Body style={styles.listItem}>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate("SinglePage", [item, 'Գրքեր'])}>
-                            <ImageBackground style={styles.pageImage} source={{url : (item.better_featured_image.media_details.sizes.medium ? item.better_featured_image.media_details.sizes.medium.source_url : item.better_featured_image.media_details.sizes.thumbnail.source_url)}}>
+                            <ImageBackground style={styles.pageImage} source={{uri : (item.better_featured_image.media_details.sizes.medium ? item.better_featured_image.media_details.sizes.medium.source_url : item.better_featured_image.media_details.sizes.thumbnail.source_url)}}>
                                 <ImageBackground style={styles.pageImageGradient} source={require('../../../img/grBottom.png')}>
                                     <Text padder style={styles.pageTitleIn}>{item.title.rendered}</Text>
                                 </ImageBackground>

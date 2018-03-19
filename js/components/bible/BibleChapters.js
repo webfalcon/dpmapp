@@ -30,8 +30,16 @@ class BibleChapters extends Component {
         };
         this.chapterSelected = this.chapterSelected.bind(this);
     }
+
     chapterSelected(chapter){
             this.props.goReading(chapter, this.props.testament);
+    }
+    numToArray(num){
+        let arr = [];
+        for(let i =1; i <= num; i++){
+            arr.push(i);
+        }
+        return arr;
     }
     render() {
         return (
@@ -40,11 +48,11 @@ class BibleChapters extends Component {
                 <Grid
                     style={styles.list}
                     renderItem={(item, i) =>
-                        <Button style={styles.chapter} onPress={()=> this.chapterSelected(item.Number)} key={i}>
-                            <Text style={styles.chapterNum}>{item.Number}</Text>
+                        <Button style={styles.chapter} onPress={()=> this.chapterSelected(item)} key={i}>
+                            <Text style={styles.chapterNum}>{item}</Text>
                         </Button>
                     }
-                    data={this.props.bible.Testaments[this.props.testament].Books[this.props.book].Chapters}
+                    data={this.numToArray(this.props.bookPages[this.props.testament].books[this.props.book].books)}
                     itemsPerRow={5}
                 />
 

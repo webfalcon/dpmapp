@@ -59,7 +59,7 @@ class DerekPrince extends Component {
                     <Content>
                         { this.state.ready ?
                             <View>
-                                <ImageBackground style={styles.pageImage} source={{url : this.state.result.better_featured_image.source_url}}>
+                                <ImageBackground style={styles.pageImage} source={{uri : this.state.result.better_featured_image.source_url}}>
                                     <ImageBackground style={styles.pageImage} source={require('../../../img/Gradient.png')}>
                                         <Text style={styles.pageTitleIn}>{this.state.result.title.rendered}</Text>
                                     </ImageBackground>
@@ -81,7 +81,6 @@ class DerekPrince extends Component {
                                               }
 
                                           }}
-                                          baseFontStyle="16"
                                     />
                                 </Content>
                             </View>

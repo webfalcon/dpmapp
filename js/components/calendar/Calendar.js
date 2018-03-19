@@ -46,7 +46,7 @@ class DpmCalendar extends Component {
     }
 
     componentWillMount(){
-       this.getApi();
+        this.getApi();
     }
 
     getApi(){
@@ -65,12 +65,8 @@ class DpmCalendar extends Component {
                     ready : true,
                     loading: false,
                 });
-                console.log(this.state);
-                return responseJson;
             })
-            .catch((error) => {
-                console.error(error);
-            });
+            .catch(console.error);
     }
 
     onDayPress(day) {
@@ -79,7 +75,7 @@ class DpmCalendar extends Component {
             selected: day.dateString,
             todayDate : Moment(day.timestamp).format('MM.DD'),
             ready:false
-        },()=>this.getApi());
+        },() => this.getApi());
     }
 
 
@@ -87,63 +83,52 @@ class DpmCalendar extends Component {
     return (
       <Container>
         <PageHeader title="Օրվա Խոսքը" {...this.props} />
-        <Grid>
-            <Row size={6}>
-                <Calendar
-                    minDate={'2017-01-01'}
-                    maxDate={'2017-12-30'}
-                    monthFormat={'MMMM'}
-                    onDayPress={this.onDayPress}
-                    style={styles.calendar}
-                    markedDates={{[this.state.selected]: {selected: true}}}
-                    theme={{
-                        calendarBackground: '#333248',
-                        textSectionTitleColor: 'white',
-                        dayTextColor: 'white',
-                        todayTextColor: 'white',
-                        selectedDayTextColor: 'white',
-                        monthTextColor: 'white',
-                        selectedDayBackgroundColor: '#187AAE',
-                        arrowColor: 'white',
-                        'stylesheet.calendar.header': {
-                            week: {
-                                marginTop: 5,
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                marginLeft :10,
-                                marginRight :10
-                            }
-                        }
-                    }}
+          <Calendar
+              minDate={'2018-01-01'}
+              maxDate={'2018-12-31'}
+              monthFormat={'MMMM'}
+              onDayPress={this.onDayPress}
+              style={styles.calendar}
+              markedDates={{[this.state.selected]: {selected: true}}}
+              theme={{
+                  calendarBackground: '#333248',
+                  textSectionTitleColor: 'white',
+                  dayTextColor: 'white',
+                  todayTextColor: 'white',
+                  selectedDayTextColor: 'white',
+                  monthTextColor: 'white',
+                  selectedDayBackgroundColor: '#187AAE',
+                  arrowColor: 'white',
+                  'stylesheet.calendar.header': {
+                      week: {
+                          marginTop: 15,
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          marginLeft :10,
+                          marginRight :10
+                      }
+                  }
+              }}
 
-                />
-            </Row>
-            <Row style={styles.calendar} size={2}>
-                <Body>
-                    <Text style={styles.selectedDay}>{Moment(this.state.selected).format('MMMM D')}</Text>
-                </Body>
-            </Row>
-            <Row size={4}>
-                {this.state.ready ?
-                    <Body style={styles.listItem}>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate("SingleDay", this.state.today)}>
-                        <ImageBackground style={styles.pageImage} source={{url : this.state.result.better_featured_image.source_url}}>
-                            <ImageBackground style={styles.pageImageGradient} source={require('../../../img/grBottom.png')}>
-                                <Text style={styles.pageTitleIn}>{this.state.result.title.rendered}</Text>
-                            </ImageBackground>
-                        </ImageBackground>
-                    </TouchableOpacity>
-                    </Body>
-                :
-                    <Content>
-                        <View style={styles.spinerCont}>
-                            <Spinner color='#328FBC' />
-                        </View>
-                    </Content>
-                }
+          />
 
-            </Row>
-        </Grid>
+          {this.state.ready ?
+              <Body style={styles.todayArticle}>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate("SingleDay", this.state.today)}>
+                  <ImageBackground style={styles.pageImage} source={{uri : this.state.result.better_featured_image.source_url}}>
+                      <ImageBackground style={styles.pageImageGradient} source={require('../../../img/grBottom.png')}>
+                          <Text style={styles.pageTitleIn}>{this.state.result.title.rendered}</Text>
+                      </ImageBackground>
+                  </ImageBackground>
+              </TouchableOpacity>
+              </Body>
+              :
+              <Content>
+                  <View style={styles.spinerCont}>
+                      <Spinner color='#328FBC' />
+                  </View>
+              </Content>
+          }
       </Container>
 
     );

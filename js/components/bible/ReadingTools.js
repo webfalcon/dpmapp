@@ -15,7 +15,8 @@ import {
     Icon,
     View
 } from "native-base";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+
 import { Row, Grid } from 'react-native-easy-grid';
 
 
@@ -32,6 +33,8 @@ class IconJnjel {
         this.module = module;
         this.width = width;
         this.height = height;
+    }
+    componentWillMount(){
         Asset.fromModule(this.module).downloadAsync();
     }
 }
@@ -82,7 +85,7 @@ class ReadingTools extends Component {
 
     }
 
-    componentDidMount(){
+    componentWillMount(){
         Audio.setAudioModeAsync({
             allowsRecordingIOS: false,
             interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
@@ -294,7 +297,7 @@ class ReadingTools extends Component {
                                 <Button style={styles.leftRightChapter}
                                         transparent
                                         onPress={() => this.goForward()}>
-                                    <Icon style={styles.whiteIcon} name="arrow-back" />
+                                    <MaterialIcons style={styles.arrowLeft} name="keyboard-arrow-left" />
                                 </Button>
                             </Left>
                             <Body>
@@ -316,7 +319,7 @@ class ReadingTools extends Component {
                                 <Button style={styles.leftRightChapter}
                                         transparent
                                         onPress={() => this.goNext()}>
-                                    <Icon style={styles.whiteIcon} name="arrow-forward" />
+                                    <MaterialIcons style={styles.arrowRight} name="keyboard-arrow-right" />
                                 </Button>
                             </Right>
                         </Row>

@@ -19,7 +19,7 @@ import styles from "./styles";
 import { Dimensions } from 'react-native';
 
 import HTML from 'react-native-render-html';
-import Share from 'react-native-share';
+import { Share } from 'react-native';
 
 
 
@@ -43,7 +43,7 @@ class SinglePage extends Component {
 
     }
     shareThePage(){
-        Share.open({
+        Share.share({
             title: this.state.post.title.rendered,
             message: this.state.post.title.rendered + '\n',
             url : this.state.post.guid.rendered,
@@ -57,7 +57,7 @@ class SinglePage extends Component {
                 <PageHeader title={this.state.title} {...this.props} />
                 {this.state.ready ?
                 <Content>
-                    <ImageBackground style={styles.pageImage} source={{url : (this.state.post.better_featured_image.media_details.sizes.medium ? this.state.post.better_featured_image.media_details.sizes.medium.source_url : this.state.post.better_featured_image.media_details.sizes.thumbnail.source_url)}}>
+                    <ImageBackground style={styles.pageImage} source={{uri : (this.state.post.better_featured_image.media_details.sizes.medium ? this.state.post.better_featured_image.media_details.sizes.medium.source_url : this.state.post.better_featured_image.media_details.sizes.thumbnail.source_url)}}>
                         <ImageBackground style={styles.pageImage} source={require('../../../img/Gradient.png')}>
                             <Text style={styles.pageTitleIn}>{this.state.post.title.rendered}</Text>
                         </ImageBackground>
@@ -83,7 +83,7 @@ class SinglePage extends Component {
                                           left:-10
                                       }
                                   }}
-                              baseFontStyle="16"
+                              //baseFontStyle="16"
                         />
                     </Content>
                 </Content>

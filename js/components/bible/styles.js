@@ -16,6 +16,15 @@ export default {
     whiteIcon : {
         color : '#fff',
     },
+    arrowRight: {
+        color : '#fff',
+        fontSize: 30
+    },
+    arrowLeft : {
+        color : '#fff',
+        fontSize:30,
+        marginLeft:10
+    },
     whiteColor : {
         color : '#fff',
     },
@@ -79,8 +88,8 @@ export default {
         flexWrap: 'wrap',
         width:width
     },
-    tabs : {
-
+    tab : {
+        backgroundColor: 'white'
     },
     chapterCont: {
         backgroundColor: '#F4F4F4'
@@ -128,6 +137,7 @@ export default {
     },
     readingContent : {
         backgroundColor: '#fafafa',
+        marginBottom:10
     },
     readingTexts : {
         textAlign:'justify',

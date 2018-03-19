@@ -18,7 +18,7 @@ import {ImageBackground, Text} from 'react-native';
 import PageHeader from '../PageHeader';
 import styles from "./styles";
 import HTML from 'react-native-render-html';
-import Share from 'react-native-share';
+import { Share } from 'react-native';
 
 const api = 'http://derekprincearmenia.com/wp-json/wp/v2/';
 
@@ -63,7 +63,7 @@ class SingleDay extends Component {
             });
     }
     shareThePage() {
-        Share.open({
+        Share.share({
             title: this.state.result.title.rendered,
             message: this.state.result.title.rendered + '\n',
             url: this.state.result.guid.rendered,
@@ -78,7 +78,7 @@ class SingleDay extends Component {
                     <Content>
                         { this.state.ready ?
                             <View>
-                                <ImageBackground style={styles.pageImage} source={{url : this.state.result.better_featured_image.source_url}}>
+                                <ImageBackground style={styles.pageImage} source={{uri : this.state.result.better_featured_image.source_url}}>
                                     <ImageBackground style={styles.pageImage} source={require('../../../img/Gradient.png')}>
                                         <Text style={styles.pageTitleIn}>{this.state.result.title.rendered}</Text>
                                     </ImageBackground>
@@ -100,7 +100,6 @@ class SingleDay extends Component {
                                               }
 
                                           }}
-                                          baseFontStyle="16"
                                     />
                                 </Content>
                             </View>

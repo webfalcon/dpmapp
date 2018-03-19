@@ -46,16 +46,16 @@ class BibleBooks extends Component {
         return (
             <Container>
                 <Content>
-                    <List dataArray={this.props.bible.Testaments}
-                          renderRow={(item) =>
+                    <List dataArray={this.props.bookPages}
+                          renderRow={(item, index) =>
                               <View>
                                   <ListItem itemDivider>
-                                      <Text>{item.Name}</Text>
+                                      <Text>{item.name}</Text>
                                   </ListItem>
-                                  <List dataArray={item.Books}
+                                  <List dataArray={item.books}
                                         renderRow={(book) =>
-                                            <ListItem onPress={() => this.onSelectBook(book.Number)}>
-                                                <Text>{book.Name}</Text>
+                                            <ListItem onPress={() => this.onSelectBook(book.index)}>
+                                                <Text>{book.name}</Text>
                                             </ListItem>
                                         }>
                                   </List>

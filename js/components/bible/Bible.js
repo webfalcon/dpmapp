@@ -19,9 +19,8 @@ import styles from "./styles";
 import BibleBooks from './BibleBooks'
 import BibleChapters from './BibleChapters';
 
+import bookPages from './bookPages';
 
-import bJson from './bibleJson';
-const tabRef ='';
 class Bible extends Component {
     constructor(props){
         super(props);
@@ -58,7 +57,7 @@ class Bible extends Component {
   render() {
     return (
       <Container>
-          <Header androidStatusBarColor="#fff" iosBarStyle="light-content" style={styles.header}>
+          <Header backgroundColor="#116b9c" androidStatusBarColor="#116b9c" iosBarStyle="light-content" style={styles.header}>
               <Left>
                   <Button
                       transparent
@@ -79,12 +78,12 @@ class Bible extends Component {
               </Right>
           </Header>
 
-          <Tabs ref={ t=>this.tabRef = t } tabBarUnderlineStyle={{borderBottomWidth:2, borderBottomColor:'#187AAE'}} style={styles.tabs}>
-              <Tab style={styles.tab}  activeTextStyle={{color: '#187AAE'}} heading="Գրքեր">
-                  <BibleBooks bible={bJson} goChapter={this.goChapter} />
+          <Tabs ref={ t=>this.tabRef = t } tabBarUnderlineStyle={{borderBottomWidth:2, borderBottomColor:'#187AAE'}}  >
+              <Tab style={styles.tab}  activeTabStyle={styles.tab} tabStyle={styles.tab}  activeTextStyle={{color: '#187AAE'}} heading="Գրքեր">
+                  <BibleBooks bookPages={bookPages} goChapter={this.goChapter} />
               </Tab>
-              <Tab heading="Գլուխ" activeTextStyle={{color: '#187AAE'}}>
-                  <BibleChapters bible={bJson} goReading={this.goReading} testament={this.state.testament} book={this.state.selectedBook} {...this.props} />
+              <Tab heading="Գլուխ" activeTabStyle={styles.tab} tabStyle={styles.tab} activeTextStyle={{color: '#187AAE'}}>
+                  <BibleChapters bookPages={bookPages} goReading={this.goReading} testament={this.state.testament} book={this.state.selectedBook} {...this.props} />
               </Tab>
           </Tabs>
       </Container>

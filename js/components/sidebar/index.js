@@ -94,7 +94,7 @@ class SideBar extends Component {
 	render() {
 		return (
 			<Container style={styles.container}>
-				<Header androidStatusBarColor="#fff" iosBarStyle="light-content" style={styles.menuHeader}>
+				<Header backgroundColor="#116b9c" androidStatusBarColor="#116b9c" iosBarStyle="light-content"  style={styles.menuHeader}>
 					<Left>
 						<Text style={styles.title}>DPM Armenia</Text>
 					</Left>

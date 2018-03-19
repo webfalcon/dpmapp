@@ -17,7 +17,8 @@ import {
 import HomeRow from './HomeRow';
 import MainFooter from './MainFooter';
 
-import Share, {ShareSheet} from 'react-native-share';
+import { Share } from 'react-native';
+
 
 
 
@@ -43,8 +44,8 @@ class DpmMainPage extends Component {
       };
 
     return (
-      <Container style={styles.container}>
-        <Header androidStatusBarColor="#fff" iosBarStyle="light-content" style={styles.header}>
+      <Container>
+        <Header backgroundColor="#116b9c" androidStatusBarColor="#116b9c" iosBarStyle="light-content" style={styles.header}>
           <Left>
             <Button
               transparent
@@ -60,7 +61,12 @@ class DpmMainPage extends Component {
             <Button
               transparent
               onPress={()=>{
-                  Share.open(shareOptions);
+                  Share.share({
+                      title: "DPM Armenia",
+                      message: "Welcome to DPM Armenia Mobile App",
+                      url: "http://derekprincearmenia.com/",
+                      subject: "DPM Armenia" //  for email
+                  });
               }}
             >
               <Icon style={styles.whiteIcon} name="md-share" />
@@ -72,7 +78,7 @@ class DpmMainPage extends Component {
         <HomeRow {...this.props} />
 
 
-        <MainFooter {...this.props} />
+       <MainFooter {...this.props} />
       </Container>
     );
   }

@@ -28,7 +28,7 @@ class PageHeader extends Component {
 
     render() {
     return (
-        <Header androidStatusBarColor="#fff" iosBarStyle="light-content" style={styles.pageHeader}>
+        <Header backgroundColor="#116b9c" androidStatusBarColor="#116b9c" iosBarStyle="light-content" style={styles.pageHeader}>
           <Left>
             <Button transparent onPress={() => this.props.navigation.goBack()}>
               <Icon style={styles.whiteIcon} name="arrow-back" />

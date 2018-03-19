@@ -20,11 +20,12 @@ import {
 } from "native-base";
 import { Grid, Row } from "react-native-easy-grid";
 const reactStringReplace = require('react-string-replace');
-
-import bJson from './bibleJson';
+import getBook from './bibleJson';
+import bookPages from './bookPages';
 
 import styles from "./styles";
-import PageHeader from '../PageHeader';
+import {FileSystem} from "expo";
+let BibleJson = [];
 
 class BibleSearch extends Component {
     constructor(props){
@@ -34,7 +35,8 @@ class BibleSearch extends Component {
             words : [],
             verses : [],
             ready : true,
-            allVerses : []
+            allVerses : [],
+            bible : []
         };
         this.updateSearch = this.updateSearch.bind(this);
         this.Search = this.Search.bind(this);
@@ -44,6 +46,12 @@ class BibleSearch extends Component {
         this.loadMoreResult = this.loadMoreResult.bind(this);
 
         this.resultCount = 3;
+    }
+    componentWillMount(){
+
+        FileSystem.readAsStringAsync(FileSystem.documentDirectory + 'search.json').then((res)=>{
+            BibleJson = JSON.parse(res);
+        });
     }
     updateSearch(val){
         console.log(val);
@@ -60,7 +68,8 @@ class BibleSearch extends Component {
         this.setState({
             ready: false,
             words: [],
-            verses: []
+            verses: [],
+
         },
             () => this.bJsonSearch(searchKey));
 
@@ -69,7 +78,31 @@ class BibleSearch extends Component {
     bJsonSearch(searchKey){
         this.resultCount = 3;
         searchKey = searchKey.toLowerCase();
-        bJson.Testaments.forEach((test)=>{
+
+        BibleJson.Verses.forEach((vers)=>{
+               if(vers.Content.toLowerCase().includes(searchKey)){
+                   // Search in Verses
+                   if(this.wordContain(vers, searchKey)){
+                       const verses = this.state.verses;
+
+
+                       let versWithNav = {...vers, ...this.findVerseById(vers.ID)};
+
+
+                       verses.push(versWithNav);
+                       this.setState({verses : verses.slice(0, 3), allVerses: verses});
+                     //  console.log(verses);
+
+
+                   }
+               }
+           });
+
+        this.setState({
+            ready : true,
+        });
+
+        /*bJson.Testaments.forEach((test)=>{
             //Search in Testaments
             test.Books.forEach((book)=>{
                 // Search in Books
@@ -90,13 +123,12 @@ class BibleSearch extends Component {
                     });
                 });
             });
-        });
+        });*/
         return false;
     }
 
     wordContain(vers, searchKey) {
         if(searchKey.split(' ').length > 1 ){
-            //console.log('2 word');
             if(vers.Content.includes(searchKey)){
                 return true;
             }
@@ -113,43 +145,31 @@ class BibleSearch extends Component {
 
         return false;
     }
-    findVerseById(id){
-        const Id = id.split(/(\d+)/);
-        let verse = [];
-        for(let i = 1; i<Id.length; i+=2){
-            verse.push(parseInt(Id[i])-1);
-        }
-        // issue comes becouse in testament two index started at 40 not at 1
-        if(verse[1]===1){
-            return {
-                chapter : bJson.Testaments[verse[1]].Books[verse[2]-39].Chapters[verse[3]],
-                verse : bJson.Testaments[verse[1]].Books[verse[2]-39].Chapters[verse[3]].Verses[verse[4]],
-                chapterName : bJson.Testaments[verse[1]].Books[verse[2]-39].Name + ' ' + bJson.Testaments[verse[1]].Books[verse[2]-39].Chapters[verse[3]].Number,
-                verseName : bJson.Testaments[verse[1]].Books[verse[2]-39].Name + ' ' + bJson.Testaments[verse[1]].Books[verse[2]-39].Chapters[verse[3]].Number + ':' + bJson.Testaments[verse[1]].Books[verse[2]-39].Chapters[verse[3]].Verses[verse[4]].Number,
-                navigate : {
-                    book:verse[2]-38,
-                    chapter:verse[3]+1,
-                    testament: verse[1],
-                    bookIndex: verse[2]+1
-                }
-            };
-        }
-        else {
-            return {
-                chapter : bJson.Testaments[verse[1]].Books[verse[2]].Chapters[verse[3]],
-                verse : bJson.Testaments[verse[1]].Books[verse[2]].Chapters[verse[3]].Verses[verse[4]],
-                chapterName : bJson.Testaments[verse[1]].Books[verse[2]].Name + ' ' + bJson.Testaments[verse[1]].Books[verse[2]].Chapters[verse[3]].Number,
-                verseName : bJson.Testaments[verse[1]].Books[verse[2]].Name + ' ' + bJson.Testaments[verse[1]].Books[verse[2]].Chapters[verse[3]].Number + ':' + bJson.Testaments[verse[1]].Books[verse[2]].Chapters[verse[3]].Verses[verse[4]].Number,
-                navigate : {
-                    book:verse[2]+1,
-                    chapter:verse[3]+1,
-                    testament: verse[1],
-                    bookIndex: verse[2]+1
-                }
-            };
-        }
+     findVerseById(id) {
+         const Id = id.split(/(\d+)/);
+         let verse = [];
 
-    }
+         for (let i = 1; i < Id.length; i += 2) {
+             verse.push(parseInt(Id[i]) - 1);
+         }
+         // issue comes becouse in testament two index started at 40 not at 1
+            let old = 0;
+                if(verse[1] ===1){
+                    old = 39;
+                }
+            //console.log(bookPages[verse[1]].books[]);
+             let result  = {
+                 verseName: bookPages[verse[1]].books[(verse[2] - old)].name + ' ' + (verse[3] + 1) + ':' + (verse[4] + 1),
+                 navigate: {
+                     book: verse[2] - old,
+                     chapter: verse[3] + 1,
+                     testament: verse[1],
+                     bookIndex: verse[2] + 1
+                 }
+             };
+
+         return result;
+     }
     loadMoreResult() {
         this.setState({
             verses : this.state.allVerses.slice(0, this.resultCount+=10)
@@ -159,7 +179,7 @@ class BibleSearch extends Component {
     render() {
         return (
             <Container style={styles.container}>
-                <Header searchBar rounded>
+                <Header backgroundColor="#116b9c" androidStatusBarColor="#116b9c" iosBarStyle="dark-content" searchBar rounded style={{backgroundColor: 'white'}}>
                     <Item>
                         <Icon active name="search" />
                         <Input value={this.state.value}  onChangeText={(text) => this.updateSearch(text)}  placeholder="Փնտրել" />
@@ -179,9 +199,9 @@ class BibleSearch extends Component {
                             <List
                                 dataArray={this.state.verses}
                                 renderRow={(data, i) =>
-                                    <ListItem style={styles.listItemResult} onPress={() => this.props.navigation.navigate("Reading", this.findVerseById(data.ID).navigate)} key={i}>
+                                    <ListItem style={styles.listItemResult} onPress={() => this.props.navigation.navigate("Reading", data.navigate)} key={i}>
                                         <Body>
-                                        <Text style={styles.listItemResultTitle}>{this.findVerseById(data.ID).verseName}</Text>
+                                        <Text style={styles.listItemResultTitle}>{data.verseName}</Text>
                                         <Text style={styles.listItemResultText}>{
                                             reactStringReplace(data.Content, this.state.value, (match, i) => (
                                                 <Text key={i} style={styles.searchedWord}>{match}</Text>
@@ -202,7 +222,7 @@ class BibleSearch extends Component {
 
                     }
                     {
-                        (this.state.verses.length === 0 && this.state.value.length > 1) &&
+                        (this.state.verses.length === 0 && this.state.value.length > 1 && this.state.ready) &&
                         <Body style={{paddingTop:15}}>
                             <Text>Ոչինչ չի գտնվել։</Text>
                         </Body>

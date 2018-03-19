@@ -1,8 +1,5 @@
-/* @flow */
-
 import React from "react";
 
-import { Platform} from "react-native";
 import { Root } from "native-base";
 import { StackNavigator } from "react-navigation";
 

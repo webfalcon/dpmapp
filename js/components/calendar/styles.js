@@ -7,7 +7,8 @@ let {width, height} = Dimensions.get('window');
 export default {
 
     calendar : {
-        backgroundColor: '#328FBC'
+        backgroundColor: '#328FBC',
+        paddingTop:20
     },
     selectedDay : {
         color : '#fff',
@@ -32,5 +33,9 @@ export default {
         bottom :15,
         left: 10
     },
+    todayArticle : {
+        position:'absolute',
+        bottom:0
+    }
 
 };
