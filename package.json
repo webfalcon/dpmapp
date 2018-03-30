@@ -3,8 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.2.2",
+    "babel-preset-flow": "^6.23.0",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
+    "flow-bin": "^0.56.0",
+    "jest-expo": "^25.0.0",
     "react-native-scripts": "1.7.0",
-    "jest-expo": "^24.0.0",
     "react-test-renderer": "16.0.0"
   },
   "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
@@ -13,7 +22,8 @@
     "eject": "react-native-scripts eject",
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
-    "test": "node node_modules/jest/bin/jest.js --watch"
+    "test": "node node_modules/jest/bin/jest.js --watch",
+    "flow": "flow"
   },
   "jest": {
     "preset": "jest-expo"
@@ -21,18 +31,18 @@
   "dependencies": {
     "@expo/json-file": "^5.3.0",
     "@expo/vector-icons": "^6.1.0",
-    "expo": "^24.0.0",
+    "expo": "25.0.0",
     "moment": "^2.19.1",
     "native-base": "^2.3.6",
-    "react": "16.0.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-24.0.0.tar.gz",
+    "react": "16.2.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz",
     "react-native-calendars": "^1.9.2",
     "react-native-grid-component": "^1.0.7",
     "react-native-iphone-x-helper": "^1.0.1",
     "react-native-linear-gradient": "^2.3.0",
     "react-native-render-html": "^3.5.1",
     "react-native-slider": "^0.11.0",
-    "react-navigation": "^1.0.0-beta.21",
+    "react-navigation": "^1.0.0-beta.27",
     "react-string-replace": "^0.4.1"
   }
 }

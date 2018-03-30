@@ -190,7 +190,8 @@ export default {
         backgroundColor : '#328FBC',
         flex:1,
         alignItems:'center',
-        paddingTop:10
+        paddingTop:10,
+        height: 80
 
     },
     headerContent : {
