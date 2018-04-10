@@ -25,6 +25,7 @@ const HEADER_HEIGHT = 80;
 const LAST_BOOK_INDEX_OF_THE_BIBLE = 66;
 const LAST_CHAPTER_OF_LAST_BOOK = 22;
 const LAST_BOOK_OF_OLD_TESTAMENT = 39;
+const FIRST_BOOK_OF_NEW_TESTAMENT = 40;
 
 class Reading extends Component {
   constructor(props) {
@@ -32,30 +33,27 @@ class Reading extends Component {
     this.state = {
       currentBook: [],
       currentChapter: [],
-      book: 0,
       chapter: 1,
-      currentBookIndex: 0,
+      bookIndex: 0,
       ready: false,
       previousBookLength: 1,
       footerHeight: FOOTER_HEIGHT,
       selectedVerses: [],
-      isSoundPlaying: false,
       fontSize: 14,
       scheme: 'light',
     };
     this.goForward = this.goForward.bind(this);
     this.goNext = this.goNext.bind(this);
-    this.findBookFromState = this.findBookFromState.bind(this);
     this.selectVerse = this.selectVerse.bind(this);
     this.shareTheVerses = this.shareTheVerses.bind(this);
-    this.findVerseById = this.findVerseById.bind(this);
-    this.changeFooterHeight = this.changeFooterHeight.bind(this);
+    this.getVerseById = this.getVerseById.bind(this);
+    this.setFooterHeight = this.setFooterHeight.bind(this);
   }
 
   componentWillMount() {
-    const params = this.props;
-    this.setState(params, () => this.findBookFromState());
     this.setSettingFromStorage();
+    const navigation = this.props.navigation.state.params;
+    this.setBook(navigation);
   }
 
   async setSettingFromStorage() {
@@ -75,184 +73,158 @@ class Reading extends Component {
     });
   }
 
-  changeFooterHeight(isAudioPlaying) {
-    if (this.state.isSoundPlaying && isAudioPlaying) return;
+  setBook(navigation) {
+    const currentBook = getBook(navigation.bookIndex);
+    const currentChapter = currentBook.Chapters[navigation.chapter - 1];
+    this.setState({
+      currentChapter,
+      currentBook,
+      previousBookLength: this.getpreviousBookLength(navigation),
+      ready: true,
+      bookIndex: navigation.bookIndex,
+      chapter: navigation.chapter,
+    });
+  }
+  setFooterHeight(isAudioPlaying) {
+    if (isAudioPlaying) return;
 
     this.setState({
       footerHeight: isAudioPlaying ? FOOTER_HEIGHT_IN_AUDIO_PLAY_MODE : FOOTER_HEIGHT,
-      isSoundPlaying: isAudioPlaying,
     });
   }
+  getChapter(book, chapter) {
+    // chapter -1 because if we need chapter 1 then the index is 0
+    const thisBook = getBook(book);
+    return thisBook.Chapters[chapter - 1];
+  }
 
-  findBookFromState() {
-    const currentBookIndex = this.state.currentBookIndex;
-    const book = getBook(currentBookIndex);
+  getpreviousBookLength(navigation) {
+    if (navigation.bookIndex < 1) return false;
+    return getBook(navigation.bookIndex - 1).Chapters.length;
+  }
 
-    this.setState({
-      currentChapter: book.Chapters[this.state.chapter - 1],
-      currentBook: book,
-      previousBookLength:
-        currentBookIndex < 1
-          ? getBook(currentBookIndex)
-          : false,
-      ready: true,
-    });
+  getChapterTitle() {
+    return `${this.state.currentBook.Name} ${this.state.currentChapter.Number}`;
+  }
+  getAllSelectedVersesNumber() {
+    const selectedVerses = this.state.selectedVerses;
+    return `${this.getVerseById(selectedVerses[0]).verse.Number}-
+      ${this.getVerseById(selectedVerses[selectedVerses.length - 1]).verse.Number}`;
+  }
+  getAllSelectedVerses() {
+    let verses = '';
+    const selectedVerses = this.state.selectedVerses;
+    verses += selectedVerses.map(verse => `
+    ${this.getVerseById(verse).verse.Number} 
+    ${this.getVerseById(verse).verse.Content}`);
+
+    return verses;
+  }
+
+  getVerseName(verse) {
+    const currentChapter = this.state.currentChapter;
+    return `${this.getChapterTitle()}-${currentChapter.Verses[verse].Number}`;
+  }
+  getVerseById(id) {
+    const idArr = id.split(/(\d+)/);
+    let verse = [];
+
+    verse = idArr.filter(index => idArr.indexOf(index) % 2 === 1);
+    verse = verse.map(index => parseInt(index - 1));
+    const currentChapter = this.state.currentChapter;
+    return {
+      verse: currentChapter.Verses[verse[4]],
+      chapterName: this.getChapterTitle(),
+      verseName: this.getVerseName(verse[4]),
+    };
   }
 
   goForward() {
     if (this.state.chapter > 1) {
-      this.setState(
-        {
-          chapter: this.state.chapter - 1,
-        },
-        () => this.findBookFromState(),
-      );
-    } else if (
-      !(this.state.book === 1 && this.state.chapter === 1) &&
-        this.state.bookIndex !== 40
-    ) {
-      this.setState(
-        {
-          bookIndex: this.state.bookIndex - 1,
-          chapter: this.state.previousBookLength,
-        },
-        () => this.findBookFromState(),
-      );
-    } else if (this.state.bookIndex === 40) {
-      this.setState(
-        {
-          book: LAST_BOOK_OF_OLD_TESTAMENT,
-          chapter: 1,
-          bookIndex: LAST_BOOK_OF_OLD_TESTAMENT,
-        },
-        () => this.findBookFromState(),
-      );
+      this.setBook({
+        bookIndex: this.state.bookIndex,
+        chapter: this.state.chapter - 1,
+      });
+    } else if (this.state.chapter === 1 && this.state.bookIndex !== FIRST_BOOK_OF_NEW_TESTAMENT) {
+      this.setBook({
+        bookIndex: this.state.bookIndex - 1,
+        chapter: this.state.previousBookLength,
+      });
+    } else if (this.state.bookIndex === FIRST_BOOK_OF_NEW_TESTAMENT) {
+      this.setBook({
+        chapter: 1,
+        bookIndex: LAST_BOOK_OF_OLD_TESTAMENT,
+      });
     }
   }
+
 
   goNext() {
     if (this.state.chapter < this.state.currentBook.Chapters.length) {
-      this.setState(
-        {
-          chapter: this.state.chapter + 1,
-        },
-        () => this.findBookFromState(),
-      );
-    } else if (
-      !(this.state.bookIndex === LAST_BOOK_INDEX_OF_THE_BIBLE && this.state.chapter === LAST_CHAPTER_OF_LAST_BOOK) &&
-        this.state.bookIndex !== LAST_BOOK_OF_OLD_TESTAMENT
-    ) {
-      this.setState(
-        {
-          bookIndex: this.state.bookIndex + 1,
-          chapter: 1,
-        },
-        () => this.findBookFromState(),
-      );
+      this.setBook({
+        bookIndex: this.state.bookIndex,
+        chapter: this.state.chapter + 1,
+      });
+    } else if (!this.isLastBookAndLastChapter()) {
+      this.setBook({
+        bookIndex: this.state.bookIndex + 1,
+        chapter: 1,
+      });
     } else if (this.state.bookIndex === LAST_BOOK_OF_OLD_TESTAMENT) {
-      // Մաղաքիա
       // navigate to first chapter of new testament
-      this.setState(
-        {
-          book: 1,
-          chapter: 1,
-          bookIndex: 40,
-        },
-        () => this.findBookFromState(),
-      );
+      this.setBook({
+        chapter: 1,
+        bookIndex: 40,
+      });
     }
   }
 
+  isLastBookAndLastChapter() {
+    return this.state.bookIndex === LAST_BOOK_INDEX_OF_THE_BIBLE
+    && this.state.chapter === LAST_CHAPTER_OF_LAST_BOOK;
+  }
+
   selectVerse(verse) {
-    if (this.state.selectedVerses.indexOf(verse) > -1) {
+    if (this.state.selectedVerses.includes(verse)) {
       const index = this.state.selectedVerses.indexOf(verse);
       const selectedVerses = this.state.selectedVerses;
       selectedVerses.splice(index, 1);
       this.setState({
         selectedVerses,
       });
-      return;
+    } else {
+      const selectedVerses = this.state.selectedVerses;
+      selectedVerses.push(verse);
+
+      this.setState({
+        selectedVerses,
+      });
     }
-
-    const selectedVerses = this.state.selectedVerses;
-    selectedVerses.push(verse);
-
-    this.setState({
-      selectedVerses,
-    });
   }
+
   shareTheVerses() {
-    let title =
-      `${this.state.currentBook.Name} ${this.state.currentChapter.Number}`;
-    let verses = '';
     const selectedVerses = this.state.selectedVerses;
 
     if (selectedVerses.length === 1) {
-      title = this.findVerseById(selectedVerses[0]).verseName;
-      verses = this.findVerseById(selectedVerses[0]).verse.Content;
+      const title = this.getVerseById(selectedVerses[0]).verseName;
+      const verses = this.getVerseById(selectedVerses[0]).verse.Content;
 
       Share.share({
         title,
         message: `${title} \n${verses}`,
         subject: title, //  for email
       });
+    } else {
+      const title = this.getChapterTitle();
+      const getAllSelectedVerses = this.getAllSelectedVerses();
+      const getAllSelectedVersesNumber = this.getAllSelectedVersesNumber();
 
-      return;
+      Share.share({
+        title: `${title}:${getAllSelectedVersesNumber}`, // Ծննդոց 4:3-5
+        message: `${title}:${getAllSelectedVersesNumber} \n${getAllSelectedVerses}`,
+        subject: title, //  for email
+      });
     }
-
-    selectedVerses.forEach((e) => {
-      verses +=
-        `${this.findVerseById(e).verse.Number
-        } ${
-          this.findVerseById(e).verse.Content}`;
-    });
-
-    const firstToLast =
-      `${this.findVerseById(selectedVerses[0]).verse.Number
-      }-${
-        this.findVerseById(selectedVerses[selectedVerses.length - 1]).verse.Number}`; //
-    Share.share({
-      title: `${title}:${firstToLast}`, // Ծննդոց 4:3-5
-      message: `${title}:${firstToLast} \n${verses}`,
-      subject: title, //  for email
-    });
-  }
-
-  findVerseById(id) {
-    const Id = id.split(/(\d+)/);
-    const verse = [];
-    for (let i = 1; i < Id.length; i += 2) {
-      verse.push(parseInt(Id[i]) - 1);
-    }
-
-    if (verse[1] === 1) {
-      return {
-        verse: this.state.currentBook.Chapters[verse[3]].Verses[verse[4]],
-        chapterName:
-          `${this.state.currentBook.Name
-          } ${
-            this.state.currentBook.Chapters[verse[3]].Number}`,
-        verseName:
-          `${this.state.currentBook.Name
-          } ${
-            this.state.currentBook.Chapters[verse[3]].Number
-          }:${
-            this.state.currentBook.Chapters[verse[3]].Verses[verse[4]].Number}`,
-      };
-    }
-    return {
-      verse: this.state.currentBook.Chapters[verse[3]].Verses[verse[4]],
-      chapterName:
-          `${this.state.currentBook.Name
-          } ${
-            this.state.currentBook.Chapters[verse[3]].Number}`,
-      verseName:
-          `${this.state.currentBook.Name
-          } ${
-            this.state.currentBook.Chapters[verse[3]].Number
-          }:${
-            this.state.currentBook.Chapters[verse[3]].Verses[verse[4]].Number}`,
-    };
   }
 
   render() {
@@ -268,7 +240,6 @@ class Reading extends Component {
           </View>
         ) : (
           <Content
-            ref="_scrollView"
             style={[styles.readingContent, { backgroundColor: contentBgColor }]}
             padder
           >
@@ -373,8 +344,7 @@ class Reading extends Component {
           ]}
         >
           <ReadingTools
-            ref="_ReadingTools"
-            changeFooterHeight={this.changeFooterHeight}
+            setFooterHeight={this.setFooterHeight}
             goForward={this.goForward}
             goNext={this.goNext}
             book={this.state.bookIndex}

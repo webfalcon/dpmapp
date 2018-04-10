@@ -1,4 +1,4 @@
-export default (bookIndex) => {
+export default function getBook(bookIndex) {
   let book;
   switch (bookIndex) {
     case 1:
@@ -230,4 +230,4 @@ export default (bookIndex) => {
       break;
   }
   return book;
-};
+}
