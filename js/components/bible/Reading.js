@@ -18,6 +18,13 @@ import { View, AsyncStorage, Share } from 'react-native';
 import getBook from './bibleJson';
 import styles from './styles';
 import ReadingTools from './ReadingTools';
+import {
+  getpreviousBookLength,
+  getChapterTitle,
+  getAllSelectedVersesNumber,
+  getAllSelectedVerses,
+  getVerseById,
+} from './BibleFunctions';
 
 const FOOTER_HEIGHT_IN_AUDIO_PLAY_MODE = 110;
 const FOOTER_HEIGHT = 80;
@@ -46,7 +53,6 @@ class Reading extends Component {
     this.goNext = this.goNext.bind(this);
     this.selectVerse = this.selectVerse.bind(this);
     this.shareTheVerses = this.shareTheVerses.bind(this);
-    this.getVerseById = this.getVerseById.bind(this);
     this.setFooterHeight = this.setFooterHeight.bind(this);
   }
 
@@ -79,7 +85,7 @@ class Reading extends Component {
     this.setState({
       currentChapter,
       currentBook,
-      previousBookLength: this.getpreviousBookLength(navigation),
+      previousBookLength: getpreviousBookLength(navigation),
       ready: true,
       bookIndex: navigation.bookIndex,
       chapter: navigation.chapter,
@@ -91,52 +97,6 @@ class Reading extends Component {
     this.setState({
       footerHeight: isAudioPlaying ? FOOTER_HEIGHT_IN_AUDIO_PLAY_MODE : FOOTER_HEIGHT,
     });
-  }
-  getChapter(book, chapter) {
-    // chapter -1 because if we need chapter 1 then the index is 0
-    const thisBook = getBook(book);
-    return thisBook.Chapters[chapter - 1];
-  }
-
-  getpreviousBookLength(navigation) {
-    if (navigation.bookIndex < 1) return false;
-    return getBook(navigation.bookIndex - 1).Chapters.length;
-  }
-
-  getChapterTitle() {
-    return `${this.state.currentBook.Name} ${this.state.currentChapter.Number}`;
-  }
-  getAllSelectedVersesNumber() {
-    const selectedVerses = this.state.selectedVerses;
-    return `${this.getVerseById(selectedVerses[0]).verse.Number}-
-      ${this.getVerseById(selectedVerses[selectedVerses.length - 1]).verse.Number}`;
-  }
-  getAllSelectedVerses() {
-    let verses = '';
-    const selectedVerses = this.state.selectedVerses;
-    verses += selectedVerses.map(verse => `
-    ${this.getVerseById(verse).verse.Number} 
-    ${this.getVerseById(verse).verse.Content}`);
-
-    return verses;
-  }
-
-  getVerseName(verse) {
-    const currentChapter = this.state.currentChapter;
-    return `${this.getChapterTitle()}-${currentChapter.Verses[verse].Number}`;
-  }
-  getVerseById(id) {
-    const idArr = id.split(/(\d+)/);
-    let verse = [];
-
-    verse = idArr.filter(index => idArr.indexOf(index) % 2 === 1);
-    verse = verse.map(index => parseInt(index - 1));
-    const currentChapter = this.state.currentChapter;
-    return {
-      verse: currentChapter.Verses[verse[4]],
-      chapterName: this.getChapterTitle(),
-      verseName: this.getVerseName(verse[4]),
-    };
   }
 
   goForward() {
@@ -157,7 +117,6 @@ class Reading extends Component {
       });
     }
   }
-
 
   goNext() {
     if (this.state.chapter < this.state.currentBook.Chapters.length) {
@@ -206,8 +165,9 @@ class Reading extends Component {
     const selectedVerses = this.state.selectedVerses;
 
     if (selectedVerses.length === 1) {
-      const title = this.getVerseById(selectedVerses[0]).verseName;
-      const verses = this.getVerseById(selectedVerses[0]).verse.Content;
+      const Verse = getVerseById(selectedVerses[0], this.state);
+      const title = Verse.verseName;
+      const verses = Verse.verse.Content;
 
       Share.share({
         title,
@@ -215,13 +175,13 @@ class Reading extends Component {
         subject: title, //  for email
       });
     } else {
-      const title = this.getChapterTitle();
-      const getAllSelectedVerses = this.getAllSelectedVerses();
-      const getAllSelectedVersesNumber = this.getAllSelectedVersesNumber();
+      const title = getChapterTitle(this.state);
+      const allSelectedVerses = getAllSelectedVerses(this.state);
+      const allSelectedVersesNumber = getAllSelectedVersesNumber(this.state);
 
       Share.share({
-        title: `${title}:${getAllSelectedVersesNumber}`, // Ծննդոց 4:3-5
-        message: `${title}:${getAllSelectedVersesNumber} \n${getAllSelectedVerses}`,
+        title: `${title}:${allSelectedVersesNumber}`, // Ծննդոց 4:3-5
+        message: `${title}:${allSelectedVersesNumber} \n${allSelectedVerses}`,
         subject: title, //  for email
       });
     }

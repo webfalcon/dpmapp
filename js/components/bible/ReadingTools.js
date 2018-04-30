@@ -157,7 +157,7 @@ class ReadingTools extends Component {
                 loopingType: status.isLooping ? LOOPING_TYPE_ONE : LOOPING_TYPE_ALL,
                 shouldCorrectPitch: status.shouldCorrectPitch,
             });
-            this.props.changeFooterHeight(status.isPlaying);
+            this.props.setFooterHeight(status.isPlaying);
             if (status.didJustFinish && !status.isLooping) {
                 this.goNext();
             }
